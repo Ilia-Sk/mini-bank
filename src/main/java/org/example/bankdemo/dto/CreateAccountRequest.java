@@ -1,4 +1,6 @@
 package org.example.bankdemo.dto;
 
-public record CreateAccountRequest(String owner) {
+import jakarta.validation.constraints.NotBlank;
+
+public record CreateAccountRequest(@NotBlank String owner) {
 }

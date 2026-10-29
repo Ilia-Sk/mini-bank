@@ -1,6 +1,9 @@
 package org.example.bankdemo.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
-public record AmountRequest(BigDecimal amount) {
+public record AmountRequest(@NotNull @Positive  BigDecimal amount) {
 }

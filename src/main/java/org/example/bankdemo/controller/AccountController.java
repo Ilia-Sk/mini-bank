@@ -1,5 +1,7 @@
 package org.example.bankdemo.controller;
 
+import jakarta.validation.Valid;
+import org.example.bankdemo.dto.AccountResponse;
 import org.example.bankdemo.dto.CreateAccountRequest;
 import org.example.bankdemo.entity.Account;
 import org.example.bankdemo.service.AccountService;
@@ -21,27 +23,30 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Account createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
-        return accountService.create(createAccountRequest.owner());
+    public AccountResponse createAccount(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
+        return AccountResponse.from(accountService.create(createAccountRequest.owner()));
     }
 
     @GetMapping
-    public List<Account> getAccounts() {
-        return accountService.getAll();
+    public List<AccountResponse> getAccounts() {
+        return accountService.getAll().
+                stream().
+                map(AccountResponse::from)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public Account getAccount(@PathVariable Long id) {
-        return accountService.getById(id);
+    public AccountResponse getAccount(@PathVariable Long id) {
+        return AccountResponse.from(accountService.getById(id));
     }
 
     @PostMapping("/{id}/deposit")
-    public Account deposit(@PathVariable Long id, @RequestBody AmountRequest request) {
-        return accountService.deposit(id, request.amount());
+    public AccountResponse deposit(@PathVariable Long id,@Valid @RequestBody AmountRequest request) {
+        return AccountResponse.from(accountService.deposit(id, request.amount()));
     }
 
     @PostMapping("/{id}/withdraw")
-    public Account withdraw(@PathVariable Long id, @RequestBody AmountRequest request) {
-        return accountService.withdraw(id, request.amount());
+    public AccountResponse withdraw(@PathVariable Long id,@Valid @RequestBody AmountRequest request) {
+        return AccountResponse.from((accountService.withdraw(id,request.amount())));
     }
 }
