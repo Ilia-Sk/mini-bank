@@ -1,13 +1,10 @@
 package org.example.bankdemo.controller;
 
 import jakarta.validation.Valid;
-import org.example.bankdemo.dto.AccountResponse;
-import org.example.bankdemo.dto.CreateAccountRequest;
-import org.example.bankdemo.entity.Account;
+import org.example.bankdemo.dto.*;
 import org.example.bankdemo.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.example.bankdemo.dto.AmountRequest;
 
 import java.util.List;
 

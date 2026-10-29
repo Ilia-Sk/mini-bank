@@ -55,6 +55,12 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(),"Invalid parameter: "+e.getName());
     }
 
+    @ExceptionHandler(InvalidTransferException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidTransferException(InvalidTransferException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleOther(Exception e){
