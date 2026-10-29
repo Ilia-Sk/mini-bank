@@ -1,9 +1,7 @@
 package org.example.bankdemo.service;
 
-import org.example.bankdemo.dto.TransferResult;
 import org.example.bankdemo.exception.AccountNotFoundException;
 import org.example.bankdemo.exception.InsufficientFundsException;
-import org.example.bankdemo.exception.InvalidTransferException;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.bankdemo.entity.Account;
 import org.example.bankdemo.repository.AccountRepository;
@@ -45,26 +43,10 @@ public class AccountService {
     @Transactional
     public Account withdraw(Long id, BigDecimal amount) {
         Account account = getById(id);
-        if (account.getBalance().compareTo(amount) < 0) {
+        if (account.getBalance().subtract(amount).compareTo(BigDecimal.ZERO) <= 0) {
             throw new InsufficientFundsException("Insufficient Funds");
         }
         account.setBalance(account.getBalance().subtract(amount));
         return accountRepository.save(account);
     }
-
-    @Transactional
-    public TransferResult transfer(Long fromId, Long toId, BigDecimal amount) {
-        if(fromId.equals(toId)) {
-            throw new InvalidTransferException("Cannot transfer to the same account");
-        }
-        Account fromAccount = getById(fromId);
-        Account toAccount = getById(toId);
-        if (fromAccount.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException("Insufficient Funds");
-        }
-        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
-        toAccount.setBalance(toAccount.getBalance().add(amount));
-        accountRepository.save(fromAccount);
-        accountRepository.save(toAccount);
-        return new TransferResult(fromAccount, toAccount);}
 }

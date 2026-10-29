@@ -3,6 +3,7 @@ package org.example.bankdemo.controller;
 import jakarta.validation.Valid;
 import org.example.bankdemo.dto.*;
 import org.example.bankdemo.service.AccountService;
+import org.example.bankdemo.service.TransferService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,11 @@ import java.util.List;
 public class AccountController {
 
     private final AccountService accountService;
+    private final TransferService transferService;
 
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService, TransferService transferService) {
         this.accountService = accountService;
+        this.transferService = transferService;
     }
 
     @PostMapping
@@ -45,5 +48,12 @@ public class AccountController {
     @PostMapping("/{id}/withdraw")
     public AccountResponse withdraw(@PathVariable Long id,@Valid @RequestBody AmountRequest request) {
         return AccountResponse.from((accountService.withdraw(id,request.amount())));
+    }
+
+    @GetMapping("/{id}/transfers")
+    public List<TransferHistoryItem> getHistory(@PathVariable Long id) {
+        return transferService.getHistory(id).stream()
+                .map(TransferHistoryItem::from)
+                .toList();
     }
 }
