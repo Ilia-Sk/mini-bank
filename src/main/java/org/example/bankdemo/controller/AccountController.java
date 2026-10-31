@@ -64,4 +64,12 @@ public class AccountController {
             @RequestParam(defaultValue = "10") int size) {
         return transferService.getHistory(id, page, size);
     }
+
+    @GetMapping("/search")
+    public PageResponse<AccountResponse> getAccountsThatConsistProvidedText(
+            @RequestParam(required = false) String owner,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return accountService.searchAccountByName(owner, page, size);
+    }
 }

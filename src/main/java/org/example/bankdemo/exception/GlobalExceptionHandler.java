@@ -24,13 +24,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccountNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleAccountNotFoundException(AccountNotFoundException e) {
-        return new ErrorResponse(HttpStatus.NOT_FOUND.value(),e.getMessage());
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
     }
 
     @ExceptionHandler(InsufficientFundsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInsufficientFundsException(InsufficientFundsException e) {
-        return new  ErrorResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -46,33 +46,38 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(),"Malformed JSON request");
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Malformed JSON request");
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(),"Invalid parameter: "+e.getName());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid parameter: " + e.getName());
     }
 
     @ExceptionHandler(InvalidTransferException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidTransferException(InvalidTransferException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
     @ExceptionHandler(InvalidPageRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidPageRequestException(InvalidPageRequestException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleOther(Exception e){
-        logger.error("Unexpected error",e);
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),"Internal Server Error");
+    public ErrorResponse handleOther(Exception e) {
+        logger.error("Unexpected error", e);
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error");
 
     }
 
+    @ExceptionHandler(InvalidOwnerException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidOwnerException(InvalidOwnerException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
 }

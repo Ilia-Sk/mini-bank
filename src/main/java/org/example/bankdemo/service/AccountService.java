@@ -1,7 +1,13 @@
 package org.example.bankdemo.service;
 
+import org.example.bankdemo.dto.AccountResponse;
+import org.example.bankdemo.dto.PageResponse;
 import org.example.bankdemo.exception.AccountNotFoundException;
 import org.example.bankdemo.exception.InsufficientFundsException;
+import org.example.bankdemo.exception.InvalidOwnerException;
+import org.example.bankdemo.exception.InvalidPageRequestException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.bankdemo.entity.Account;
 import org.example.bankdemo.repository.AccountRepository;
@@ -48,5 +54,30 @@ public class AccountService {
         }
         account.setBalance(account.getBalance().subtract(amount));
         return accountRepository.save(account);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<AccountResponse> searchAccountByName(String name, int page, int size) {
+        if (name == null || name.isBlank()) {
+            throw new InvalidOwnerException("Owner must not be blank");
+        }
+        if(page < 0) {
+            throw new InvalidPageRequestException("Page must be greater than or equal to 0");
+        }
+        if(size <1 || size >50){
+            throw new InvalidPageRequestException("Size must be between 1 and 50");
+        }
+        Page<Account> result =accountRepository.findByOwnerContainingIgnoreCase(name, PageRequest.of(page, size));
+        List<AccountResponse> items =result.getContent().
+                stream().
+                map(AccountResponse::from).
+                toList();
+        return new PageResponse<>(
+                items,
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
     }
 }
