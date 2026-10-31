@@ -2,12 +2,17 @@ package org.example.bankdemo.controller;
 
 import jakarta.validation.Valid;
 import org.example.bankdemo.dto.*;
+import org.example.bankdemo.entity.Transfer;
+import org.example.bankdemo.repository.TransferRepository;
 import org.example.bankdemo.service.AccountService;
 import org.example.bankdemo.service.TransferService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -15,10 +20,12 @@ public class AccountController {
 
     private final AccountService accountService;
     private final TransferService transferService;
+    private final TransferRepository transferRepository;
 
-    public AccountController(AccountService accountService, TransferService transferService) {
+    public AccountController(AccountService accountService, TransferService transferService, TransferRepository transferRepository) {
         this.accountService = accountService;
         this.transferService = transferService;
+        this.transferRepository = transferRepository;
     }
 
     @PostMapping
@@ -51,9 +58,10 @@ public class AccountController {
     }
 
     @GetMapping("/{id}/transfers")
-    public List<TransferHistoryItem> getHistory(@PathVariable Long id) {
-        return transferService.getHistory(id).stream()
-                .map(TransferHistoryItem::from)
-                .toList();
+    public PageResponse<TransferHistoryItem> getHistory(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return transferService.getHistory(id, page, size);
     }
 }
