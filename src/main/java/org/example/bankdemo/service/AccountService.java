@@ -43,7 +43,7 @@ public class AccountService {
     @Transactional
     public Account withdraw(Long id, BigDecimal amount) {
         Account account = getById(id);
-        if (account.getBalance().subtract(amount).compareTo(BigDecimal.ZERO) <= 0) {
+        if (account.getBalance().compareTo(amount) < 0) {
             throw new InsufficientFundsException("Insufficient Funds");
         }
         account.setBalance(account.getBalance().subtract(amount));
