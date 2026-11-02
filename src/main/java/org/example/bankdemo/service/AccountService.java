@@ -1,11 +1,13 @@
 package org.example.bankdemo.service;
 
 import org.example.bankdemo.dto.AccountResponse;
+import org.example.bankdemo.dto.AccountSummaryResponse;
 import org.example.bankdemo.dto.PageResponse;
 import org.example.bankdemo.exception.AccountNotFoundException;
 import org.example.bankdemo.exception.InsufficientFundsException;
 import org.example.bankdemo.exception.InvalidOwnerException;
 import org.example.bankdemo.exception.InvalidPageRequestException;
+import org.example.bankdemo.repository.TransferRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +22,11 @@ import java.util.List;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final TransferRepository transferRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, TransferRepository transferRepository) {
         this.accountRepository = accountRepository;
+        this.transferRepository = transferRepository;
     }
 
     public Account create(String owner) {
@@ -78,6 +82,24 @@ public class AccountService {
                 result.getSize(),
                 result.getTotalElements(),
                 result.getTotalPages()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public AccountSummaryResponse  getAccountSummary(Long id) {
+        Account account = getById(id);
+        Long sentCount = transferRepository.countByFromAccountId(id);
+        Long receivedCount = transferRepository.countByToAccountId(id);
+        BigDecimal sent=transferRepository.sumSentByAccountId(id);
+        BigDecimal received=transferRepository.sumReceivedByAccountId(id);
+        return new AccountSummaryResponse(
+                account.getId(),
+                account.getOwner(),
+                account.getBalance(),
+                sentCount,
+                receivedCount,
+                sent,
+                received
         );
     }
 }

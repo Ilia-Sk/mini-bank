@@ -72,4 +72,9 @@ public class AccountController {
             @RequestParam(defaultValue = "10") int size){
         return accountService.searchAccountByName(owner, page, size);
     }
+
+    @GetMapping("/{id}/summary")
+    public AccountSummaryResponse getAccountSummary(@PathVariable Long id) {
+        return accountService.getAccountSummary(id);
+    }
 }
